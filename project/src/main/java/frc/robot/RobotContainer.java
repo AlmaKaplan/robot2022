@@ -29,9 +29,9 @@ public class RobotContainer {
     CommandScheduler.getInstance().setDefaultCommand(DriveTrain.getInstance(), driveTrain);
     configureBindings();
   }
-// controller.getTriangleButton() &&
+
   private void configureBindings() {
-    new Trigger(() ->  !Transfer.getInstance().isTwoSensors()).onTrue(new IntakeCommand());
+    new Trigger(() ->  controller.getTriangleButton() && !Transfer.getInstance().isTwoSensors()).onTrue(new IntakeCommand());
 
     new Trigger(() -> controller.getCircleButton() &&
      (Transfer.getInstance().isFirstSensor() || Transfer.getInstance().isSeconSensor())).onTrue(new ShooterCommand());
