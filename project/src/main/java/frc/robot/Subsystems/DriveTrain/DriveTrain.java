@@ -17,28 +17,30 @@ import frc.robot.PortMap;
 import frc.robot.Subsystems.Shooter.ShooterConstants;
 
 public class DriveTrain extends SubsystemBase {
-  private TalonFX leftMotor;
-  private TalonFXConfiguration leftMotorConfig;
+  private static DriveTrain drive;
 
-  private TalonFX rightMotor;
-  private TalonFXConfiguration rightMotorConfig;
+  private final TalonFX leftMotor;
+  private final TalonFXConfiguration leftMotorConfig;
 
-  private StatusSignal<Current> leftCurrent;
-  private StatusSignal<Voltage> leftVolts;
-  private StatusSignal<AngularVelocity> leftVelocity;
+  private final TalonFX rightMotor;
+  private final TalonFXConfiguration rightMotorConfig;
 
-  private StatusSignal<Current> rightCurrent;
-  private StatusSignal<Voltage> rightVolts;
-  private StatusSignal<AngularVelocity> rightVelocity;
+  private final StatusSignal<Current> leftCurrent;
+  private final StatusSignal<Voltage> leftVolts;
+  private final StatusSignal<AngularVelocity> leftVelocity;
+
+  private final StatusSignal<Current> rightCurrent;
+  private final StatusSignal<Voltage> rightVolts;
+  private final StatusSignal<AngularVelocity> rightVelocity;
 
   private final VelocityVoltage rightPIDVelocity;
   private final VelocityVoltage leftPIDVelocity;
 
-  public DriveTrain() {
-    leftMotor = new TalonFX(PortMap.DriveTrain.DRIVE_TRAIN_LEFT_MOTOR);
+  private DriveTrain() {
+    leftMotor = new TalonFX(PortMap.DriveTrainPorts.DRIVE_TRAIN_LEFT_MOTOR);
     leftMotorConfig = new TalonFXConfiguration();
 
-    rightMotor = new TalonFX(PortMap.DriveTrain.DRIVE_TRAIN_RIGHT_MOTOR);
+    rightMotor = new TalonFX(PortMap.DriveTrainPorts.DRIVE_TRAIN_RIGHT_MOTOR);
     rightMotorConfig = new TalonFXConfiguration();
 
     leftCurrent = leftMotor.getStatorCurrent();
@@ -56,11 +58,11 @@ public class DriveTrain extends SubsystemBase {
     rightConfig();
   }
 
-  public void leftConfig() {
+  private void leftConfig() {
     leftMotorConfig.Feedback.RotorToSensorRatio = DriveTrainConstants.GEAR;
 
     leftMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    leftMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    leftMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     leftMotorConfig.Slot0.kP = DriveTrainConstants.left_kP;
     leftMotorConfig.Slot0.kI = DriveTrainConstants.left_kI;
@@ -69,11 +71,11 @@ public class DriveTrain extends SubsystemBase {
     leftMotor.getConfigurator().apply(leftMotorConfig);
   }
 
-  public void rightConfig() {
+  private void rightConfig() {
     rightMotorConfig.Feedback.RotorToSensorRatio = DriveTrainConstants.GEAR;
 
     rightMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    rightMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    rightMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     rightMotorConfig.Slot0.kP = DriveTrainConstants.right_kP;
     rightMotorConfig.Slot0.kI = DriveTrainConstants.right_kI;
@@ -118,6 +120,12 @@ public class DriveTrain extends SubsystemBase {
     return leftVolts.getValueAsDouble();
   }
 
+  public static DriveTrain getInstance() {
+    if (drive == null) {
+      drive = new DriveTrain();
+    }
+    return drive;
+  }
 
   @Override
   public void periodic() {

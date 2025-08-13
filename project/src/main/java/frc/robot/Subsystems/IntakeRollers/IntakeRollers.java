@@ -16,22 +16,23 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.PortMap;
 
 public class IntakeRollers extends SubsystemBase {
+  private static IntakeRollers rollers;
 
-  private TalonFX motor;
-  private TalonFXConfiguration motorConfig;
+  private final TalonFX motor;
+  private final TalonFXConfiguration motorConfig;
 
-  private DigitalInput sensor;
+  private final DigitalInput sensor;
 
-  private StatusSignal<Current> current;
-  private StatusSignal<Voltage> volts;
-  private StatusSignal<AngularVelocity> velocity;
+  private final StatusSignal<Current> current;
+  private final StatusSignal<Voltage> volts;
+  private final StatusSignal<AngularVelocity> velocity;
 
   
-  public IntakeRollers() {
-    motor = new TalonFX(PortMap.IntakeRollers.INTAKE_MOTOR);
+  private IntakeRollers() {
+    motor = new TalonFX(PortMap.IntakeRollersPorts.INTAKE_MOTOR);
     motorConfig = new TalonFXConfiguration();
 
-    sensor = new DigitalInput(PortMap.IntakeRollers.INTAKE_ARM_DIGITAL_INPUT_SENSOR);
+    sensor = new DigitalInput(PortMap.IntakeRollersPorts.INTAKE_ARM_DIGITAL_INPUT_SENSOR);
 
     current = motor.getStatorCurrent();
     volts = motor.getMotorVoltage();
@@ -40,7 +41,7 @@ public class IntakeRollers extends SubsystemBase {
     config();
   }
 
-  public void config() {
+  private void config() {
     motorConfig.Feedback.RotorToSensorRatio = IntakeRollersConstants.GEAR;
 
     motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -67,6 +68,13 @@ public class IntakeRollers extends SubsystemBase {
 
   public double getVoltage() {
     return volts.getValueAsDouble();
+  }
+
+  public static IntakeRollers getInstance() {
+    if(rollers == null) {
+      rollers = new IntakeRollers();
+    }
+    return rollers;
   }
 
   @Override

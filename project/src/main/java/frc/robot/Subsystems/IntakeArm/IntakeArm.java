@@ -16,20 +16,21 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.PortMap;
 
 public class IntakeArm extends SubsystemBase {
+  private static IntakeArm arm;
 
-  private TalonFX motor;
-  private TalonFXConfiguration motorConfig;
+  private final TalonFX motor;
+  private final TalonFXConfiguration motorConfig;
 
-  private StatusSignal<Current> current;
-  private StatusSignal<Voltage> volts;
-  private StatusSignal<Angle> position;
+  private final StatusSignal<Current> current;
+  private final StatusSignal<Voltage> volts;
+  private final StatusSignal<Angle> position;
 
-  private PositionVoltage control;
+  private final PositionVoltage control;
 
 
-  public IntakeArm() {
+  private IntakeArm() {
 
-    motor = new TalonFX(PortMap.IntakeArm.INTAKE_ARM_MOTOR);
+    motor = new TalonFX(PortMap.IntakeArmPorts.INTAKE_ARM_MOTOR);
     motorConfig = new TalonFXConfiguration();
 
     current = motor.getStatorCurrent();
@@ -41,11 +42,11 @@ public class IntakeArm extends SubsystemBase {
     config();
   }
 
-  public void config() {
+  private void config() {
     motorConfig.Feedback.RotorToSensorRatio = IntakeArmConstants.GEAR;
 
     motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     motorConfig.Slot0.kP = IntakeArmConstants.kP;
     motorConfig.Slot0.kP = IntakeArmConstants.kI;
@@ -68,6 +69,13 @@ public class IntakeArm extends SubsystemBase {
 
   public double getVoltage() {
     return volts.getValueAsDouble();
+  }
+
+  public static IntakeArm getInstance() {
+    if (arm == null) {
+      arm = new IntakeArm();
+    }
+    return arm;
   }
 
   @Override

@@ -16,27 +16,29 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.PortMap;
 
 public class Shooter extends SubsystemBase {
-  private TalonFX leftMotor;
-  private TalonFXConfiguration leftMotorConfig;
+  private static Shooter shooter;
 
-  private TalonFX rightMotor;
-  private TalonFXConfiguration rightMotorConfig;
+  private final TalonFX leftMotor;
+  private final TalonFXConfiguration leftMotorConfig;
 
-  private StatusSignal<Current> leftCurrent;
-  private StatusSignal<Voltage> leftVolts;
-  private StatusSignal<AngularVelocity> leftVelocity;
+  private final TalonFX rightMotor;
+  private final TalonFXConfiguration rightMotorConfig;
 
-  private StatusSignal<Current> rightCurrent;
-  private StatusSignal<Voltage> rightVolts;
-  private StatusSignal<AngularVelocity> rightVelocity;
+  private final StatusSignal<Current> leftCurrent;
+  private final StatusSignal<Voltage> leftVolts;
+  private final StatusSignal<AngularVelocity> leftVelocity;
+
+  private final StatusSignal<Current> rightCurrent;
+  private final StatusSignal<Voltage> rightVolts;
+  private final StatusSignal<AngularVelocity> rightVelocity;
 
   private final VelocityVoltage velocity;
 
-  public Shooter() {
-    leftMotor = new TalonFX(PortMap.Shooter.SHOOTER_LEFT_MOTOR);
+  private Shooter() {
+    leftMotor = new TalonFX(PortMap.ShooterPorts.SHOOTER_LEFT_MOTOR);
     leftMotorConfig = new TalonFXConfiguration();
 
-    rightMotor = new TalonFX(PortMap.Shooter.SHOOTER_RIGHT_MOTOR);
+    rightMotor = new TalonFX(PortMap.ShooterPorts.SHOOTER_RIGHT_MOTOR);
     rightMotorConfig = new TalonFXConfiguration();
 
     leftCurrent = leftMotor.getStatorCurrent();
@@ -53,7 +55,7 @@ public class Shooter extends SubsystemBase {
     rightConfig();
   }
 
-  public void leftConfig() {
+  private void leftConfig() {
     leftMotorConfig.Feedback.RotorToSensorRatio = ShooterConstants.GEAR;
 
     leftMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -66,7 +68,7 @@ public class Shooter extends SubsystemBase {
     leftMotor.getConfigurator().apply(leftMotorConfig);
   }
 
-  public void rightConfig() {
+  private void rightConfig() {
     rightMotorConfig.Feedback.RotorToSensorRatio = ShooterConstants.GEAR;
 
     rightMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -87,6 +89,10 @@ public class Shooter extends SubsystemBase {
     leftMotor.setControl(velocity.withVelocity(SetPoint).withSlot(0).withFeedForward(ff));
   }
 
+  public void setVoltage(double volt) {
+    leftMotor.setVoltage(volt);
+    rightMotor.setVoltage(volt);
+  }
   public double getRightVelocity() {
     return rightVelocity.getValueAsDouble()*60;
   }
@@ -111,6 +117,12 @@ public class Shooter extends SubsystemBase {
     return leftVolts.getValueAsDouble();
   }
 
+  public static Shooter getInstance() {
+    if(shooter == null) {
+      shooter = new Shooter();
+    }
+    return shooter;
+  }
 
   @Override
   public void periodic() {

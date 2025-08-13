@@ -7,4 +7,9 @@ public class IntakeArmConstants {
     public static final double kP = 1;
     public static final double kI = 0;
     public static final double kD = 0.001;
+
+    public static final double OPEN = 90;
+    public static final double CLOSE = 0;
+
+
 }
