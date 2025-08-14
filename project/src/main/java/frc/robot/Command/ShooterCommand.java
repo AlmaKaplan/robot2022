@@ -2,6 +2,7 @@
 package frc.robot.Command;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.CurrentAction;
 import frc.robot.RobotContainer;
 import frc.robot.Subsystems.Shooter.Shooter;
 import frc.robot.Subsystems.Transfer.Transfer;
@@ -14,7 +15,7 @@ public class ShooterCommand extends Command {
 
   @Override
   public void initialize() {
-    RobotContainer.currentAction.addString("current ACtion", "shooter");
+    CurrentAction.currentAction.addString("current Action", "shooter");
   }
 
   @Override
@@ -27,7 +28,7 @@ public class ShooterCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.currentAction.addString("current ACtion", "finished shooter");
+    CurrentAction.currentAction.addString("current Action", "finished shooter");
     Shooter.getInstance().setVelocity(0);
     Transfer.getInstance().setVoltage(0);
   }

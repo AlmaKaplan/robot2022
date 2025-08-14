@@ -2,6 +2,7 @@
 package frc.robot.Command;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.CurrentAction;
 import frc.robot.RobotContainer;
 import frc.robot.Subsystems.IntakeArm.IntakeArm;
 import frc.robot.Subsystems.IntakeArm.IntakeArmConstants;
@@ -18,7 +19,7 @@ public class IntakeAndShooter extends Command {
 
   @Override
   public void initialize() {
-    RobotContainer.currentAction.addString("current ACtion", "Intake and shooter");
+    CurrentAction.currentAction.addString("current Action", "Intake and shooter");
   }
 
   @Override
@@ -37,7 +38,7 @@ public class IntakeAndShooter extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.currentAction.addString("current ACtion", "fnished Intake and shooter");
+    CurrentAction.currentAction.addString("current Action", "fnished Intake and shooter");
     IntakeRollers.getInstance().setVoltage(0);
     IntakeArm.getInstance().setControl(IntakeArmConstants.CLOSE);
     Transfer.getInstance().setVoltage(0);

@@ -1,7 +1,6 @@
 
 package frc.robot.Subsystems.Transfer;
 
-import com.MAutils.DashBoard.DashBoard;
 import com.MAutils.DashBoard.DashBoardTab;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -31,6 +30,8 @@ public class Transfer extends SubsystemBase {
   private final StatusSignal<AngularVelocity> velocity;
 
   private final DashBoardTab transferTab;
+
+  private int num = 0;
 
   private double ballInTransfer;
 
@@ -90,14 +91,12 @@ public class Transfer extends SubsystemBase {
   }
 
   public double ballinTransfer() {
+    ballInTransfer = 0;
     if (isFirstSensor()) {
       ballInTransfer ++;
     }
     if (isSeconSensor()) {
       ballInTransfer ++;
-    }
-    if (!isTwoSensors()) {
-      ballInTransfer = 0;
     }
     return ballInTransfer;
   }
@@ -112,6 +111,7 @@ public class Transfer extends SubsystemBase {
   @Override
   public void periodic() {
     BaseStatusSignal.refreshAll(current, volts, velocity);
-    transferTab.addNum("Ball in transfer", ballInTransfer);
+    transferTab.addNum("Ball in transfer", ballinTransfer());
+    transferTab.addBoolean("is true", !isTwoSensors());
   }
 }
